@@ -1,26 +1,32 @@
-# Flask app with home page, SQLite DB, and message table
-
 from flask import Flask, render_template, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
+import google.generativeai as genai
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///messages.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
-# Message model
-class Message(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	text = db.Column(db.String(255), nullable=False)
+# Configure with your API key
+genai.configure(api_key="YOUR_API_KEY_HERE")
 
-# Create tables
-with app.app_context():
-	db.create_all()
+# Choose a model (gemini-1.5-flash is fast, gemini-1.5-pro is smarter)
+model = genai.GenerativeModel("gemini-1.5-flash")
+
+chat = []
 
 @app.route('/')
 def home():
-	messages = Message.query.all()
-	return render_template('index.html', messages=messages)
+	return render_template('index.html', messages=chat)
+
+
+@app.route('/add', methods=['POST'])
+def add_message():
+	text = request.form['text']
+	response = model.generate_content(text)
+	response = response.text.replace("*", "-")
+	chat.append({
+		"question":text,
+		"answer":response
+		})
+	return redirect(url_for('home'))
+
 
 if __name__ == '__main__':
 	app.run(debug=True)
