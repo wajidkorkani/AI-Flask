@@ -3,19 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 </head>
 <body>
-    <h1>Welcome to the Home Page</h1>
-    <form method="POST" action="/add_message">
-        <input type="text" name="message" placeholder="Enter your message" required>
-        <button type="submit">Add Message</button>
+    <br><br>
+    {% if messages %}
+        <div class="container">        
+            {% for message in messages %}
+                <p class="question">{{ message.question }}</p>
+                <br>
+                <p class="answer">{{ message.answer }}</p>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty">
+            <h1>Hi, how can I help you?</h1>
+        </div>
+    {% endif %}
+    <br><br>
+    <form method="POST" action="/add">
+        <input type="text" name="text" placeholder="Enter your message" required>
+        <button type="submit">
+            <div>
+            <img src="{{ url_for('static', filename='send.png') }}" alt="">
+            </div>
+        </button>
     </form>
-    <h2>Messages</h2>
-    <ul>
-        {% for msg in messages %}
-            <li>{{ msg.text }}</li>
-        {% endfor %}
-    </ul>
 </body>
 </html>
