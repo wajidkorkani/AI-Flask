@@ -4,7 +4,7 @@ import google.generativeai as genai
 app = Flask(__name__)
 
 # Configure with your API key
-genai.configure(api_key="YOUR_API_KEY_HERE")
+genai.configure(api_key="AIzaSyDwZ1UUPkakY04l-a4OXXUETMLU19rIsXo")
 
 # Choose a model (gemini-1.5-flash is fast, gemini-1.5-pro is smarter)
 model = genai.GenerativeModel("gemini-1.5-flash")
@@ -20,7 +20,8 @@ def home():
 def add_message():
 	text = request.form['text']
 	response = model.generate_content(text)
-	response = response.text.replace("*", "-")
+	response = response.text.replace("*", "")
+	response = response.replace("\"", "")
 	chat.append({
 		"question":text,
 		"answer":response
